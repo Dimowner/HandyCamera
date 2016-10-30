@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,12 +48,7 @@ public class GalleryActivity extends AppCompatActivity {
 		}
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				makePhoto();
-			}
-		});
+		fab.setOnClickListener(view -> makePhoto());
 	}
 
 	private void makePhoto() {

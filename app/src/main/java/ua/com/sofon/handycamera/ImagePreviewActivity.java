@@ -1,6 +1,5 @@
 package ua.com.sofon.handycamera;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -100,16 +99,8 @@ public class ImagePreviewActivity extends AppCompatActivity
 				AlertDialog.Builder builder = new AlertDialog.Builder(ImagePreviewActivity.this);
 				builder.setTitle(R.string.image_preview_warning);
 				builder.setMessage(R.string.image_preview_accept_deletion);
-				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						new DeleteImageTask().execute(mImageId);
-					}
-				});
-				builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
+				builder.setPositiveButton(android.R.string.ok, (dialog, id) -> new DeleteImageTask().execute(mImageId));
+				builder.setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel());
 				builder.create().show();
 				return true;
 			case R.id.action_edit:

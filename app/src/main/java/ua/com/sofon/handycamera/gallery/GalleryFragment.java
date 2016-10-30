@@ -12,7 +12,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import java.util.List;
 
@@ -58,13 +57,10 @@ public class GalleryFragment extends Fragment
 		mRecyclerView.setLayoutManager(new GridAutofitLayoutManager(getContext(), dpWidth));
 
 		mAdapter = new GridAdapter();
-		mAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-				Intent intent = new Intent(getContext(), ImagePreviewActivity.class);
-				intent.putExtra(ImageItem.EXTRAS_KEY_IMAGE, mAdapter.getItem(pos).getId());
-				startActivity(intent);
-			}
+		mAdapter.setOnItemClickListener((adapterView, view1, pos, id) -> {
+			Intent intent = new Intent(getContext(), ImagePreviewActivity.class);
+			intent.putExtra(ImageItem.EXTRAS_KEY_IMAGE, mAdapter.getItem(pos).getId());
+			startActivity(intent);
 		});
 
 		mRecyclerView.setAdapter(mAdapter);

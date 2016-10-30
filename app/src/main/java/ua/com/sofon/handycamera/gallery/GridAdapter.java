@@ -59,12 +59,9 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 		final int pos = holder.getAdapterPosition();
 		ImageItem img = data.get(pos);
 
-		holder.mView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (itemClickListener != null) {
-					itemClickListener.onItemClick(null, v, pos, v.getId());
-				}
+		holder.mView.setOnClickListener(v -> {
+			if (itemClickListener != null) {
+				itemClickListener.onItemClick(null, v, pos, v.getId());
 			}
 		});
 		TextView tvTitle = (TextView) holder.mView.findViewById(R.id.grid_item_title);
