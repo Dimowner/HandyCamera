@@ -11,26 +11,31 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import android.util.Log;
 
-import ua.com.sofon.handycamera.camera.CameraActivity;
+import java.io.File;
+import java.io.IOException;
+
 import ua.com.sofon.handycamera.ImageEditActivity;
 import ua.com.sofon.handycamera.R;
 import ua.com.sofon.handycamera.util.FileUtil;
 
 public class GalleryActivity extends AppCompatActivity {
 
+	private static final String TAG = "GalleryActivity";
+
 	private static final int REQUEST_CODE_MAKE_PHOTO = 1;
 
 	private static final int REQUEST_WRITE_PERMISSION = 2;
 
-	/** Link to image */
-	protected Uri imageUri = null;
+	private static final String FILE_PROVIDER_AUTHORITY = "ua.com.sofon.handycamera.fileprovider";
+
+	/** Temp image path */
+	String mCurrentPhotoPath;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class GalleryActivity extends AppCompatActivity {
 
 	private void makePhoto() {
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-			runCameraActivityLollipop();
+			runCameraActivityLollipopAndBeyond();
 		} else{
 			runCameraActivityPreLollipop();
 		}
@@ -62,13 +67,13 @@ public class GalleryActivity extends AppCompatActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable("image_uri", imageUri);
+		outState.putString("m_cur_img_path", mCurrentPhotoPath);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		imageUri = savedInstanceState.getParcelable("image_uri");
+		mCurrentPhotoPath = savedInstanceState.getString("m_cur_img_path");
 	}
 
 	@Override
@@ -79,13 +84,7 @@ public class GalleryActivity extends AppCompatActivity {
 				case REQUEST_CODE_MAKE_PHOTO:
 					//Open edit ImageEditActivity with camera results.
 					Intent intent = new Intent(getApplicationContext(), ImageEditActivity.class);
-					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-						intent.putExtra(
-								MediaStore.EXTRA_OUTPUT,
-								data.getStringExtra(MediaStore.EXTRA_OUTPUT));
-					} else {
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri.getPath());
-					}
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoPath);
 					startActivity(intent);
 					break;
 			}
@@ -93,35 +92,49 @@ public class GalleryActivity extends AppCompatActivity {
 	}
 
 	private void runCameraActivityPreLollipop() {
-		// do something for phones running an SDK before lollipop
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		imageUri = getOutputMediaFileUri();
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-		startActivityForResult(intent, REQUEST_CODE_MAKE_PHOTO);
+		try {
+			// do something for phones running an SDK before lollipop
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			Uri imageUri = Uri.fromFile(FileUtil.createTempImageFile(getApplicationContext()));
+			mCurrentPhotoPath = imageUri.getPath();
+			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+			startActivityForResult(intent, REQUEST_CODE_MAKE_PHOTO);
+		} catch (IOException e) {
+			Log.e(TAG, "", e);
+		}
 	}
 
-	private void runCameraActivityLollipop() {
+	private void runCameraActivityLollipopAndBeyond() {
 		if (ContextCompat.checkSelfPermission(GalleryActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 				!= PackageManager.PERMISSION_GRANTED) {
 			requestWritePermission();
 		} else {
-			startActivityForResult(new Intent(this, CameraActivity.class), REQUEST_CODE_MAKE_PHOTO);
+			dispatchTakePictureIntent();
 		}
 	}
 
-	/**
-	 * Get Uri for image file.
-	 * @return Uri.
-	 */
-	private Uri getOutputMediaFileUri() {
-		String timeStamp = new SimpleDateFormat(
-				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-		File f = FileUtil.createFile(FileUtil.getPicturesStorageDir(""),
-				"IMG_"+ timeStamp + ".jpeg");
-		if (f != null) {
-			return Uri.fromFile(f);
-		} else {
-			return null;
+	private void dispatchTakePictureIntent() {
+		Log.v(TAG, "dispatchTakePictureIntent");
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		// Ensure that there's a camera activity to handle the intent
+		if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			// Create the File where the photo should go
+			File photoFile = null;
+			try {
+				photoFile = FileUtil.createTempImageFile(getApplicationContext());
+			} catch (IOException ex) {
+				Log.e(TAG, "", ex);
+			}
+			// Continue only if the File was successfully created
+			if (photoFile != null) {
+				mCurrentPhotoPath = photoFile.getPath();
+				Uri photoURI = FileProvider.getUriForFile(this,
+						FILE_PROVIDER_AUTHORITY,
+						photoFile);
+				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+				startActivityForResult(takePictureIntent, REQUEST_CODE_MAKE_PHOTO);
+			}
 		}
 	}
 
@@ -141,7 +154,7 @@ public class GalleryActivity extends AppCompatActivity {
 														@NonNull int[] grantResults) {
 		if (requestCode == REQUEST_WRITE_PERMISSION) {
 			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-				startActivityForResult(new Intent(this, CameraActivity.class), REQUEST_CODE_MAKE_PHOTO);
+				dispatchTakePictureIntent();
 			}
 		} else {
 			super.onRequestPermissionsResult(requestCode, permissions, grantResults);

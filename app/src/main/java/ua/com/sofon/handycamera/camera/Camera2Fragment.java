@@ -368,12 +368,7 @@ public class Camera2Fragment extends Fragment
 	private void showToast(final String text) {
 		final Activity activity = getActivity();
 		if (activity != null) {
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-				}
-			});
+			activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_SHORT).show());
 		}
 	}
 
@@ -450,7 +445,7 @@ public class Camera2Fragment extends Fragment
 		super.onActivityCreated(savedInstanceState);
 //        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
 
-		mFile = FileUtil.getNewImageFile();
+		mFile = FileUtil.createImageInDcim();
 	}
 
 	@Override

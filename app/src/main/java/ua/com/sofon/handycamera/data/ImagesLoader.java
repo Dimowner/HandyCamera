@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,36 +13,23 @@ import java.util.List;
  * {@link ImagesDataSource} as its source. This Loader is a {@link AsyncTaskLoader} so it queries
  * the data asynchronously.
  */
-public class ImagesLoader extends AsyncTaskLoader<List<ImageItem>> {
+public class ImagesLoader extends AsyncTaskLoader<List<File>> {
 
-	private ImagesDataSource mDataSource;
+	private GaleryDataSource mDataSource;
 
-	private long imageID = ImageItem.NO_ID;
 
-	public ImagesLoader(Context context, @NonNull ImagesDataSource dataSource) {
+	public ImagesLoader(Context context, @NonNull GaleryDataSource dataSource) {
 		super(context);
 		mDataSource = dataSource;
 	}
 
-	public ImagesLoader(Context context, @NonNull ImagesDataSource dataSource, long imageID) {
-		super(context);
-		mDataSource = dataSource;
-		this.imageID = imageID;
+	@Override
+	public List<File> loadInBackground() {
+		return mDataSource.getImages();
 	}
 
 	@Override
-	public List<ImageItem> loadInBackground() {
-		if (imageID == ImageItem.NO_ID) {
-			return mDataSource.getImages();
-		} else {
-			List<ImageItem> list = new ArrayList<>();
-			list.add(mDataSource.getImage(imageID));
-			return list;
-		}
-	}
-
-	@Override
-	public void deliverResult(List<ImageItem> data) {
+	public void deliverResult(List<File> data) {
 		if (isReset()) {
 			return;
 		}

@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				 android:orientation="vertical"
-				 android:layout_width="match_parent"
-				 android:layout_height="wrap_content"
-				 android:background="?android:attr/selectableItemBackground"
-				 android:clickable="true"
-				 android:focusable="true">
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+				 <!--android:orientation="vertical"-->
+				 <!--android:layout_width="match_parent"-->
+				 <!--android:layout_height="wrap_content"-->
+				 <!--android:background="?android:attr/selectableItemBackground"-->
+				 <!--android:clickable="true"-->
+				 <!--android:focusable="true">-->
 
-	<ImageView
+	<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/grid_item_img"
 		android:layout_width="match_parent"
 		android:layout_height="120dp"
 		android:scaleType="centerCrop"
 		android:layout_gravity="center_vertical|center_horizontal"/>
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom"
-		android:padding="@dimen/keyline_1_minus_8dp"
-		android:orientation="vertical">
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:textColor="@color/cyan"
-			android:textStyle="bold"
-			android:textSize="14sp"
-			android:id="@+id/grid_item_title"/>
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:textSize="12sp"
-			android:textColor="@color/cyan"
-			android:id="@+id/grid_item_date"/>
-	</LinearLayout>
-</FrameLayout>
+	<!--<LinearLayout-->
+		<!--android:layout_width="match_parent"-->
+		<!--android:layout_height="wrap_content"-->
+		<!--android:layout_gravity="bottom"-->
+		<!--android:padding="@dimen/keyline_1_minus_8dp"-->
+		<!--android:orientation="vertical">-->
+		<!--<TextView-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:singleLine="true"-->
+			<!--android:textColor="@color/cyan"-->
+			<!--android:textStyle="bold"-->
+			<!--android:textSize="14sp"-->
+			<!--android:id="@+id/grid_item_title"/>-->
+		<!--<TextView-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:singleLine="true"-->
+			<!--android:textSize="12sp"-->
+			<!--android:textColor="@color/cyan"-->
+			<!--android:id="@+id/grid_item_date"/>-->
+	<!--</LinearLayout>-->
+<!--</FrameLayout>-->

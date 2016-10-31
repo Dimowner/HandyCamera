@@ -8,11 +8,11 @@
 		android:orderInCategory="100"
 		android:title="@string/menu_item_delete"
 		app:showAsAction="ifRoom"/>
-	<item
-		android:id="@+id/action_edit"
-		android:icon="@drawable/pencil"
-		android:orderInCategory="100"
-		android:title="@string/menu_item_edit"
-		app:showAsAction="ifRoom"/>
+	<!--<item-->
+		<!--android:id="@+id/action_edit"-->
+		<!--android:icon="@drawable/pencil"-->
+		<!--android:orderInCategory="100"-->
+		<!--android:title="@string/menu_item_edit"-->
+		<!--app:showAsAction="ifRoom"/>-->
 
 </menu>

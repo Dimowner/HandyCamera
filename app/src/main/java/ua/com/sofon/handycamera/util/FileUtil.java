@@ -1,5 +1,6 @@
 package ua.com.sofon.handycamera.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -123,6 +125,116 @@ public class FileUtil {
 		}
 		Log.v(LOG_TAG, "picturesFile = " + file.getPath());
 		return file;
+	}
+
+	/**
+	 * Create directory in external storage public directory.
+	 * @return File with public DCIM/Camera/ directory.
+	 */
+	public static File getDcimStorageDir() {
+		// Get the directory for the user's public pictures directory.
+		File file = new File(
+				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+				"Camera"
+		);
+		if (file.exists()) {
+			Log.i(LOG_TAG, "Directory " + file.getAbsolutePath() + " is exists");
+		} else if (!file.mkdirs()) {
+			Log.e(LOG_TAG, "Directory " + file.getAbsolutePath() + " was not created");
+		}
+		Log.v(LOG_TAG, "picturesFile = " + file.getPath());
+		return file;
+	}
+
+	/**
+	 * Create directory in external storage public directory.
+	 * @return File with public DCIM/Camera/ directory.
+	 */
+	public static File getCacheDir(Context context) {
+//		TODO: FIX dir
+		// Get the directory for the user's public pictures directory.
+		File file = //context.getCacheDir();
+				new File(
+				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+				"Camera"
+		);
+		if (file.exists()) {
+			Log.i(LOG_TAG, "Directory " + file.getAbsolutePath() + " is exists");
+		} else if (!file.mkdirs()) {
+			Log.e(LOG_TAG, "Directory " + file.getAbsolutePath() + " was not created");
+		}
+		Log.v(LOG_TAG, "picturesFile = " + file.getPath());
+		return file;
+	}
+
+	/**
+	 * Create new image file in DCIM directory. Name formed by current date.
+	 * @return Created image file Uri.
+	 */
+	public static File createImageInDcim() {
+		String timeStamp = new SimpleDateFormat(
+				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+		File f = FileUtil.createFile(FileUtil.getDcimStorageDir(),
+				"IMG_"+ timeStamp + ".jpg");
+		if (f != null) {
+			return f;
+		} else {
+			return null;
+		}
+	}
+
+//	/**
+//	 * Create new image file in DCIM directory. Name formed by current date.
+//	 * @return Created image file Uri.
+//	 */
+//	public static File createTempImage(Context context) {
+//		String timeStamp = new SimpleDateFormat(
+//				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+//		File f = FileUtil.createFile(FileUtil.getCacheDir(context),
+//				"IMG_"+ timeStamp + ".jpeg");
+//		if (f != null) {
+//			return f;
+//		} else {
+//			return null;
+//		}
+//	}
+
+	/**
+	 * Create new image file in DCIM directory. Name formed by current date.
+	 * @return Created image file Uri.
+	 */
+	public static File createTempImageFile(Context context) throws IOException {
+		Log.v(LOG_TAG, "createImageFile");
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat(
+				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(
+				imageFileName,  /* prefix */
+				".jpg",         /* suffix */
+				storageDir      /* directory */
+		);
+
+//		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//		File image = FileUtil.createFile(storageDir, "IMG_"+ timeStamp + ".jpg");
+
+		// Save a file: path for use with ACTION_VIEW intents
+//		mCurrentPhotoPath = "file:" + image.getPath();
+		return image;
+	}
+
+	public static void findAllFilesWithExtension(File dir, String extension, List<File> listFiles) {
+		File[] files = dir.listFiles();
+		if (files != null) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					findAllFilesWithExtension(files[i], extension, listFiles);
+				} else if (files[i].getName().endsWith(extension)) {
+					listFiles.add(files[i]);
+				}
+			}
+		}
 	}
 
 	/**
@@ -250,15 +362,15 @@ public class FileUtil {
 		return ok;
 	}
 
-	/**
-	 * Create new file for image with generated name.
-	 * @return Created file.
-	 */
-	public static File getNewImageFile() {
-		String timeStamp = new SimpleDateFormat(
-				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-		return FileUtil.createFile(
-				FileUtil.getStorageDir(FileUtil.APPLICATION_DIR),
-				"IMG_"+ timeStamp + ".jpeg");
-	}
+//	/**
+//	 * Create new file for image with generated name.
+//	 * @return Created file.
+//	 */
+//	public static File getNewImageFile() {
+//		String timeStamp = new SimpleDateFormat(
+//				"yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+//		return FileUtil.createFile(
+//				FileUtil.getStorageDir(FileUtil.APPLICATION_DIR),
+//				"IMG_"+ timeStamp + ".jpeg");
+//	}
 }

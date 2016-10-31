@@ -6,13 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import ua.com.sofon.handycamera.R;
-import ua.com.sofon.handycamera.data.ImageItem;
 
 /**
  * Created on 11.09.2016.
@@ -20,7 +21,7 @@ import ua.com.sofon.handycamera.data.ImageItem;
  */
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
-	private List<ImageItem> data;
+	private List<File> data;
 
 	private AdapterView.OnItemClickListener itemClickListener;
 
@@ -38,7 +39,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 		this.data = new ArrayList<>();
 	}
 
-	public GridAdapter(ArrayList<ImageItem> items) {
+	public GridAdapter(ArrayList<File> items) {
 		if (items != null) {
 			this.data = items;
 		} else {
@@ -57,20 +58,19 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 
 		final int pos = holder.getAdapterPosition();
-		ImageItem img = data.get(pos);
+		File img = data.get(pos);
 
 		holder.mView.setOnClickListener(v -> {
 			if (itemClickListener != null) {
 				itemClickListener.onItemClick(null, v, pos, v.getId());
 			}
 		});
-		TextView tvTitle = (TextView) holder.mView.findViewById(R.id.grid_item_title);
-		TextView tvDate = (TextView) holder.mView.findViewById(R.id.grid_item_date);
 		ImageView ivImg = (ImageView) holder.mView.findViewById(R.id.grid_item_img);
+		Glide.with(holder.mView.getContext()).load(img)
+				.thumbnail(0.5f)
+				.crossFade()
+				.into(ivImg);
 
-		tvTitle.setText(img.getTitle());
-		tvDate.setText(img.getFormattedDate());
-		ivImg.setImageBitmap(img.getImg());
 	}
 
 	@Override
@@ -78,22 +78,22 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 		return data.size();
 	}
 
-	public void addItem(ImageItem item) {
+	public void addItem(File item) {
 		data.add(item);
 		notifyDataSetChanged();
 	}
 
-	public void addItems(List<ImageItem> items) {
+	public void addItems(List<File> items) {
 		data.addAll(items);
 		notifyDataSetChanged();
 	}
 
-	public void setData(List<ImageItem> items) {
+	public void setData(List<File> items) {
 		data = items;
 		notifyDataSetChanged();
 	}
 
-	public ImageItem getItem(int pos) {
+	public File getItem(int pos) {
 		return data.get(pos);
 	}
 

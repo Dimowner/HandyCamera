@@ -13,12 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.File;
 import java.util.List;
 
 import ua.com.sofon.handycamera.ImagePreviewActivity;
 import ua.com.sofon.handycamera.R;
-import ua.com.sofon.handycamera.data.ImageItem;
-import ua.com.sofon.handycamera.data.ImagesDataSource;
+import ua.com.sofon.handycamera.data.GaleryDataSource;
 import ua.com.sofon.handycamera.data.ImagesLoader;
 
 /**
@@ -26,10 +26,12 @@ import ua.com.sofon.handycamera.data.ImagesLoader;
  * @author Dimowner
  */
 public class GalleryFragment extends Fragment
-			implements LoaderManager.LoaderCallbacks<List<ImageItem>> {
+			implements LoaderManager.LoaderCallbacks<List<File>> {
 
 	/** Tag for logging information. */
 	private final String LOG_TAG = "GalleryFragment";
+
+	public static final String EXTRAS_KEY_IMAGE = "image_item";
 
 	public static final int DEFAULT_ITEM_WIDTH = 120;//px
 
@@ -59,7 +61,7 @@ public class GalleryFragment extends Fragment
 		mAdapter = new GridAdapter();
 		mAdapter.setOnItemClickListener((adapterView, view1, pos, id) -> {
 			Intent intent = new Intent(getContext(), ImagePreviewActivity.class);
-			intent.putExtra(ImageItem.EXTRAS_KEY_IMAGE, mAdapter.getItem(pos).getId());
+			intent.putExtra(EXTRAS_KEY_IMAGE, mAdapter.getItem(pos));
 			startActivity(intent);
 		});
 
@@ -70,11 +72,11 @@ public class GalleryFragment extends Fragment
 	}
 
 	@Override
-	public Loader<List<ImageItem>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<File>> onCreateLoader(int id, Bundle args) {
 		int dpWidth = (int) TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, DEFAULT_ITEM_WIDTH, getResources().getDisplayMetrics());
 
-		ImagesDataSource ds = ImagesDataSource.getInstance(getContext());
+		GaleryDataSource ds = GaleryDataSource.getInstance();
 		ds.setHeight(dpWidth);
 		ds.setWidth(dpWidth);
 
@@ -82,7 +84,7 @@ public class GalleryFragment extends Fragment
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ImageItem>> loader, List<ImageItem> data) {
+	public void onLoadFinished(Loader<List<File>> loader, List<File> data) {
 		if (data == null) {
 			Log.e(LOG_TAG, "Failed to load images");
 		} else {
@@ -91,6 +93,6 @@ public class GalleryFragment extends Fragment
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ImageItem>> loader) {
+	public void onLoaderReset(Loader<List<File>> loader) {
 	}
 }
