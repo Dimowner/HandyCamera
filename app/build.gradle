@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android-extensions'
 
 android {
 
@@ -8,13 +10,13 @@ android {
 		targetCompatibility JavaVersion.VERSION_1_8
 	}
 
-	compileSdkVersion 24
-	buildToolsVersion "24.0.0"
+	compileSdkVersion rootProject.ext.compileSdkVersion
+	buildToolsVersion rootProject.ext.buildToolsVersion
 
 	defaultConfig {
 		applicationId "ua.com.sofon.handycamera"
-		minSdkVersion 15
-		targetSdkVersion 24
+		minSdkVersion rootProject.ext.minSdkVersion
+		targetSdkVersion rootProject.ext.targetSdkVersion
 		versionCode 1
 		versionName "1.0"
 	}
@@ -27,11 +29,58 @@ android {
 }
 
 dependencies {
-	compile fileTree(dir: 'libs', include: ['*.jar'])
-	testCompile 'junit:junit:4.12'
-	compile 'com.android.support:design:24.2.0'
-	compile "com.android.support:support-v4:24.2.0"
-	compile "com.android.support:support-v13:24.2.0"
+	compile fileTree(include: ['*.jar'], dir: 'libs')
+	compile "com.android.support:support-v13:$rootProject.supportLibraryVersion"
+	compile "com.android.support:design:$rootProject.supportLibraryVersion"
+	compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+	compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+	compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+	compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+//	compile "com.google.guava:guava:$rootProject.guavaVersion"
+	testCompile "junit:junit:$rootProject.junitVersion"
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+
+	// dagger2
+	compile "com.google.dagger:dagger:$rootProject.dagger2Version"
+	provided "com.google.dagger:dagger-compiler:$rootProject.dagger2Version"
+	provided 'org.glassfish:javax.annotation:10.0-b28'
+
+	// Rx
+	compile 'io.reactivex:rxandroid:1.1.0' //TODO: update to 2.0.1
+	compile 'io.reactivex:rxjava:1.1.0'
+
+	//Glide
+	compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+
+	//Timber
+	compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
+
+	//Butter Knife
+	compile "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+	annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
+
+	// Testing-only dependencies
+	// Force usage of support annotations in the test app, since it is internally used by the runner module.
+	androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+	androidTestCompile "com.android.support.test:runner:$rootProject.supportTestVersion"
+	androidTestCompile "com.android.support.test:rules:$rootProject.supportTestVersion"
+	compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+	compile 'com.google.code.gson:gson:2.7'
+
 	compile 'com.github.chrisbanes:PhotoView:1.3.0'
-	compile 'com.github.bumptech.glide:glide:3.7.0'
+}
+
+buildscript {
+	ext.kotlin_version = '1.1.0'
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+repositories {
+	mavenCentral()
 }
