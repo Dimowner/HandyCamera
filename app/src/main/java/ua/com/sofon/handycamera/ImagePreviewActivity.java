@@ -59,25 +59,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
 		ImageView mImageView = (ImageView) findViewById(R.id.image_preview_photo);
 		mAttacher = new PhotoViewAttacher(mImageView);
 
-		if (savedInstanceState == null) {
-			mImage = (File) getIntent().getSerializableExtra(GalleryFragment.EXTRAS_KEY_IMAGE);
-			Glide.with(getApplicationContext()).load(mImage)
-					.thumbnail(0.5f)
-					.crossFade()
-					.into(mImageView);
-		}
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putSerializable("m_image", mImage);
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		mImage = (File) savedInstanceState.getSerializable("m_image");
+		mImage = (File) getIntent().getSerializableExtra(GalleryFragment.EXTRAS_KEY_IMAGE);
+		Glide.with(getApplicationContext()).load(mImage)
+				.thumbnail(0.5f)
+				.crossFade()
+				.into(mImageView);
 	}
 
 	@Override
